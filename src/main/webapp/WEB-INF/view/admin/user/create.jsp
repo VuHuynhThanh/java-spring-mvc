@@ -39,7 +39,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Full Name:</label>
-                                    <form:input type="text" class="form-control" path="fullname" />
+                                    <form:input type="text" class="form-control" path="fullName" />
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Address:</label>
