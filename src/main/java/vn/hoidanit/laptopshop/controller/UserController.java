@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -41,14 +42,8 @@ public class UserController {
 
     @RequestMapping("/admin/user/{id}")
     public String getUserDetailPage(Model model, @PathVariable Long id) {
-        Optional<User> user = this.userService.getUserById(id);
-        System.out.println("Check path id = " + id);
-        model.addAttribute("id", id);
-        if (user.isPresent()) {
-            model.addAttribute("user", user.get());
-        } else {
-            model.addAttribute("user", new User());
-        }
+        User user = this.userService.getUserById(id);
+        model.addAttribute("user", user);
         return "/admin/user/show";
     }
 
@@ -58,10 +53,30 @@ public class UserController {
         return "/admin/user/create";
     }
 
+    @RequestMapping(value = "/admin/user/update/{id}") // Defaul method: GET
+    public String getUpdateUserPage(Model model, @PathVariable Long id) {
+        User currentUser = this.userService.getUserById(id);
+        model.addAttribute("newUser", currentUser);
+        return "/admin/user/update";
+    }
+
     @RequestMapping(value = "/admin/user/create", method = RequestMethod.POST)
     public String createUserPage(Model model, @ModelAttribute("newUser") User hodanit) {
         System.out.println("run here " + hodanit);
         this.userService.handleSaveUser(hodanit);
+        return "redirect:/admin/user";
+    }
+
+    @PostMapping(value = "/admin/user/update") // Defaul method: GET
+    public String postUpdateUserPage(Model model, @ModelAttribute("newUser") User hodanit) {
+        User currentUser = this.userService.getUserById(hodanit.getId());
+        if (currentUser != null) {
+            currentUser.setAddress(hodanit.getAddress());
+            currentUser.setFullName(hodanit.getFullName());
+            currentUser.setPhone(hodanit.getFullName());
+
+            this.userService.handleSaveUser(currentUser);
+        }
         return "redirect:/admin/user";
     }
 }
